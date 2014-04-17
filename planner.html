@@ -191,6 +191,7 @@ function init() {
 
 //Draws the grid
 function drawGrid() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle='#EEEEEE';
 	ctx.fillRect(0,0,gridSize,gridSize);
 	for (var i=0;i<grids;i++) {
@@ -208,7 +209,19 @@ function drawGrid() {
 				}
 			}
 	 	}		
-	}	
+	}
+	drawKey()
+}
+
+//Counts the number of blocks of a certain type
+function countBlocks(type) {
+	count=0;	
+	for (var i=0;i<grids;i++) {
+		for (var j=0;j<grids;j++) {
+			if (blocks[i][j].type.value == type.value) { count++; }
+		}
+	}
+	return count;
 }
 
 //Draw colored labels to the right of the grid
@@ -218,8 +231,9 @@ function drawKey () {
 	for (var x in BLOCKTYPE) {
 		var blk = BLOCKTYPE[x];
 		if (blk.value != 0 && blk.value != 1) {
+			count=countBlocks(blk);	
 			ctx.fillStyle = blk.color;
-			ctx.fillText(blk.name,gridSize + 10,y);
+			ctx.fillText(count + " - " + blk.name,gridSize + 10,y);
 			y += 30;
 		}
 	}
@@ -257,9 +271,7 @@ function importGrid () {
 var c=document.getElementById('canvas');
 var ctx=c.getContext('2d');
 init()
-drawKey()
 init_mouse()
-drawGrid()
 
 </script>
 <div>
