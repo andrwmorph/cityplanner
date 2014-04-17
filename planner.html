@@ -1,12 +1,11 @@
 <html>
 <head>
-<title>City Planner</title>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-<style type="text/css">
-		.blocktype { display: inline-block;	}
-</style>
+	<title>City Planner</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<style type="text/css">
+			.blocktype { display: inline-block;	}
+	</style>
 </head>
-
 <body>
 <canvas id="canvas" height=450 width=600>Your browser does not support the HTML5 canvas tag.</canvas>
 
@@ -18,6 +17,8 @@ var blocks = new Array(grids);
 var gridSize=blockSize*grids;
 var canvasMinX;
 var canvasMaxX;
+var canvasMinY;
+var canvasMaxY;
 var clickedBlock;
 
 //Initialize mouse stuff
@@ -33,7 +34,6 @@ function init_mouse() {
 //Mouse click processing
 function onMouseClick(evt) {
 	if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX && evt.pageY > canvasMinY && evt.pageY < canvasMaxY) {
-    	//paddlex = evt.pageX - canvasMinX;
 		if (blockClicked(evt.pageX, evt.pageY)) {
 			if(document.getElementById('type_Farm').checked) {
 				changeClickedBlock(BLOCKTYPE.FARM);
@@ -64,6 +64,7 @@ function onMouseClick(evt) {
   	}
 }
 
+//Mouse is processed on the entire page
 $(document).click(onMouseClick);
 
 //Enum
@@ -84,6 +85,7 @@ var BLOCKTYPE = {
 	UNIVERSITY: {value: 13, name: "University", size: 2, color: "#CC00FF"}
 };
 
+//Returns the block type from the value number
 function getBlocktype(blockval) {
 	for (var x in BLOCKTYPE) {
 		var blk = BLOCKTYPE[x];
@@ -207,6 +209,7 @@ function drawGrid() {
 	}	
 }
 
+//Draw colored labels to the right of the grid
 function drawKey () {
 	ctx.font="20px Georgia";
 	var y = 20;
@@ -220,6 +223,7 @@ function drawKey () {
 	}
 }
 
+//Export a JSON of the blocks
 function exportGrid () {
 	var output = "["
 	var b
@@ -236,6 +240,7 @@ function exportGrid () {
 	document.getElementById('saveField').value = output;
 }
 
+//Recreate the blocks from the JSON string
 function importGrid () {
 	init()
 	input = JSON.parse(document.getElementById('saveField').value);
@@ -253,6 +258,7 @@ init()
 drawKey()
 init_mouse()
 drawGrid()
+
 </script>
 <div>
 	<div class="blocktype">1v1:</div>
