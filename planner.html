@@ -49,6 +49,8 @@ function onMouseClick(evt) {
 				changeClickedBlock(BLOCKTYPE.FOUNDRY);
 			}else if(document.getElementById('type_Market').checked) {
 				changeClickedBlock(BLOCKTYPE.MARKET);
+			}else if(document.getElementById('type_Refinery').checked) {
+				changeClickedBlock(BLOCKTYPE.REFINERY);
 			}else if(document.getElementById('type_Basement').checked) {
 				changeClickedBlock(BLOCKTYPE.BASEMENT);
 			}else if(document.getElementById('type_Tower').checked) {
@@ -57,6 +59,8 @@ function onMouseClick(evt) {
 				changeClickedBlock(BLOCKTYPE.TP);
 			}else if(document.getElementById('type_University').checked) {
 				changeClickedBlock(BLOCKTYPE.UNIVERSITY);
+			}else if(document.getElementById('type_Stables').checked) {
+				changeClickedBlock(BLOCKTYPE.STABLES);
 			}else if(document.getElementById('type_Delete').checked) {
 				deleteClickedBlock();
 			}
@@ -79,10 +83,12 @@ var BLOCKTYPE = {
 	ARMORY: {value: 7, name: "Armory", size: 1, color: "#AA00AA"},
 	FOUNDRY: {value: 8, name: "Foundry", size: 1, color: "#AAAA00"},
 	MARKET: {value: 9, name: "Market", size: 1, color: "#FFAA00"},
-	BASEMENT: {value: 10, name: "Basement", size: 1, color: "#00FFAA"},
-	TOWER: {value: 11, name: "Tower", size: 1, color: "#FF0000"},
-	TP: {value: 12, name: "Trading Post", size: 2, color: "#CCCC00"},
-	UNIVERSITY: {value: 13, name: "University", size: 2, color: "#CC00FF"}
+	REFINERY: {value: 10, name: "Refinery", size: 1, color: "#663300"},
+	BASEMENT: {value: 11, name: "Basement", size: 1, color: "#00FFAA"},
+	TOWER: {value: 12, name: "Tower", size: 1, color: "#FF0000"},
+	TP: {value: 13, name: "Trading Post", size: 2, color: "#CCCC00"},
+	UNIVERSITY: {value: 14, name: "University", size: 2, color: "#CC00FF"},
+	STABLES: {value: 15, name: "Stables", size: 2, color: "#003300"}
 };
 
 //Returns the block type from the value number
@@ -281,6 +287,7 @@ init_mouse()
 	<input type="radio" name="type" id="type_Armory" value="Armory" /><div class="blocktype" onClick="document.getElementById('type_Armory').checked=true">Armory</div>
 	<input type="radio" name="type" id="type_Foundry" value="Foundry" /><div class="blocktype" onClick="document.getElementById('type_Foundry').checked=true">Foundry</div>
 	<input type="radio" name="type" id="type_Market" value="Market" /><div class="blocktype" onClick="document.getElementById('type_Market').checked=true">Market</div>
+	<input type="radio" name="type" id="type_Refinery" value="Refinery" /><div class="blocktype" onClick="document.getElementById('type_Refinery').checked=true">Refinery</div>
 	<input type="radio" name="type" id="type_Basement" value="Basement" /><div class="blocktype" onClick="document.getElementById('type_Basement').checked=true">Basement</div>
 	<input type="radio" name="type" id="type_Tower" value="Tower" /><div class="blocktype" onClick="document.getElementById('type_Tower').checked=true">Tower</div>
 	<input type="radio" name="type" id="type_Farm" value="Farm" /><div class="blocktype" onClick="document.getElementById('type_Farm').checked=true">Farm</div>
@@ -288,6 +295,7 @@ init_mouse()
 	<input type="radio" name="type" id="type_Barracks" value="Barracks" /><div class="blocktype" onClick="document.getElementById('type_Barracks').checked=true">Barracks</div>
 	<input type="radio" name="type" id="type_TP" value="TP" /><div class="blocktype" onClick="document.getElementById('type_TP').checked=true">Trading Post</div>
 	<input type="radio" name="type" id="type_University" value="University" /><div class="blocktype" onClick="document.getElementById('type_University').checked=true">University</div>
+	<input type="radio" name="type" id="type_Stables" value="Stables" /><div class="blocktype" onClick="document.getElementById('type_Stables').checked=true">Stables</div>
 	<input type="radio" name="type" id="type_Delete" value="Delete" /><div class="blocktype" onClick="document.getElementById('type_Delete').checked=true">Delete</div>
 	<br><br>
 	<button type="Button" onClick='init()'>Reset</button>
