@@ -1,0 +1,281 @@
+<html>
+<head>
+<title>City Planner</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<style type="text/css">
+		.blocktype { display: inline-block;	}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" height=450 width=600>Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+var blockSize=40;
+var padding=2;
+var grids=11;
+var blocks = new Array(grids);
+var gridSize=blockSize*grids;
+var canvasMinX;
+var canvasMaxX;
+var clickedBlock;
+
+//Initialize mouse stuff
+function init_mouse() {
+	WIDTH = $("#canvas").width()
+	HEIGHT = $("#canvas").height()
+	canvasMinX = $("#canvas").offset().left;
+	canvasMaxX = canvasMinX + WIDTH;
+	canvasMinY = $("#canvas").offset().top;
+	canvasMaxY = canvasMinX + HEIGHT;
+}
+
+//Mouse click processing
+function onMouseClick(evt) {
+	if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX && evt.pageY > canvasMinY && evt.pageY < canvasMaxY) {
+    	//paddlex = evt.pageX - canvasMinX;
+		if (blockClicked(evt.pageX, evt.pageY)) {
+			if(document.getElementById('type_Farm').checked) {
+				changeClickedBlock(BLOCKTYPE.FARM);
+			}else if(document.getElementById('type_Barracks').checked) {
+				changeClickedBlock(BLOCKTYPE.BARRACKS);
+			}else if(document.getElementById('type_Road').checked) {
+				changeClickedBlock(BLOCKTYPE.ROAD);
+			}else if(document.getElementById('type_BS').checked) {
+				changeClickedBlock(BLOCKTYPE.BS);
+			}else if(document.getElementById('type_Armory').checked) {
+				changeClickedBlock(BLOCKTYPE.ARMORY);
+			}else if(document.getElementById('type_Foundry').checked) {
+				changeClickedBlock(BLOCKTYPE.FOUNDRY);
+			}else if(document.getElementById('type_Market').checked) {
+				changeClickedBlock(BLOCKTYPE.MARKET);
+			}else if(document.getElementById('type_Basement').checked) {
+				changeClickedBlock(BLOCKTYPE.BASEMENT);
+			}else if(document.getElementById('type_Tower').checked) {
+				changeClickedBlock(BLOCKTYPE.TOWER);
+			}else if(document.getElementById('type_TP').checked) {
+				changeClickedBlock(BLOCKTYPE.TP);
+			}else if(document.getElementById('type_University').checked) {
+				changeClickedBlock(BLOCKTYPE.UNIVERSITY);
+			}else if(document.getElementById('type_Delete').checked) {
+				deleteClickedBlock();
+			}
+		}
+  	}
+}
+
+$(document).click(onMouseClick);
+
+//Enum
+var BLOCKTYPE = {
+	NULL : {value: 0, name: "Null", size: 1, color: "#000000"}, 
+	EMPTY : {value: 1, name: "Empty", size: 1, color: "#CCCCCC"}, 
+	TC: {value: 2, name: "Town Center", size: 3, color: "#AA3030"}, 
+	FARM: {value: 3, name: "Farm", size: 1, color: "#00AA00"},
+	BARRACKS: {value: 4, name: "Barracks", size: 2, color: "#0000AA"},
+	ROAD: {value: 5, name: "Road", size: 1, color: "#333333"}, 
+	BS: {value: 6, name: "Blacksmith", size: 1, color: "#00AAAA"},
+	ARMORY: {value: 7, name: "Armory", size: 1, color: "#AA00AA"},
+	FOUNDRY: {value: 8, name: "Foundry", size: 1, color: "#AAAA00"},
+	MARKET: {value: 9, name: "Market", size: 1, color: "#FFAA00"},
+	BASEMENT: {value: 10, name: "Basement", size: 1, color: "#00FFAA"},
+	TOWER: {value: 11, name: "Tower", size: 1, color: "#FF0000"},
+	TP: {value: 12, name: "Trading Post", size: 2, color: "#CCCC00"},
+	UNIVERSITY: {value: 13, name: "University", size: 2, color: "#CC00FF"}
+};
+
+function getBlocktype(blockval) {
+	for (var x in BLOCKTYPE) {
+		var blk = BLOCKTYPE[x];
+		if (blk.value == blockval) {
+			//document.write(BLOCKTYPE[i]);
+			return blk;
+			}
+	}
+}
+
+//Block constructor
+function block(type, i, j)
+{
+	this.type = type;
+	this.size = type.size * blockSize;
+	this.i = i
+	this.j = j
+	this.x = i*blockSize
+	this.y = j*blockSize
+	this.isClicked = function(x, y) {
+		if (this.x < x && this.x + this.size > x && this.y < y && this.y + this.size > y) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	this.toString = function() {
+		return "{ \"type\": " + this.type.value + ", \"i\": " + this.i + ", \"j\": " +  this.j + " }";
+		
+	}
+}
+
+//Changes the block type of blocks[i][j]
+function changeBlock(i, j, type) {
+	if (type.size == 2 ) {
+		if (blocks[i+1][j].type.value != 1 || blocks[i][j+1].type.value != 1 || blocks[i+1][j+1].type.value != 1) {
+			return false
+		}	
+	}
+	blocks[i][j] = new block(type, i, j);
+	if (type.size > 1) { 
+		changeBlock(i + 1, j, BLOCKTYPE.NULL); 
+		changeBlock(i, j + 1, BLOCKTYPE.NULL); 
+		changeBlock(i + 1, j + 1,  BLOCKTYPE.NULL); 
+	}
+	if (type.size == 3) { 
+		changeBlock(i + 2, j, BLOCKTYPE.NULL); 
+		changeBlock(i + 2, j + 1, BLOCKTYPE.NULL); 
+		changeBlock(i, j + 2, BLOCKTYPE.NULL); 
+		changeBlock(i + 1, j + 2, BLOCKTYPE.NULL); 
+		changeBlock(i + 2, j + 2, BLOCKTYPE.NULL); 
+	}
+	drawGrid()
+}
+
+//Deletes the clicked block
+function deleteClickedBlock() {
+	if (clickedBlock.type.value != 2) {
+		var i = clickedBlock.i; var j = clickedBlock.j;
+		if (clickedBlock.type.size > 1) { 
+			changeBlock(i + 1, j, BLOCKTYPE.EMPTY); 
+			changeBlock(i, j + 1, BLOCKTYPE.EMPTY); 
+			changeBlock(i + 1, j + 1,  BLOCKTYPE.EMPTY); 
+		}
+		changeBlock(clickedBlock.i, clickedBlock.j, BLOCKTYPE.EMPTY);
+	}
+}
+
+//Changes the clicked block type
+function changeClickedBlock(type) {
+	if (clickedBlock.type.value == 1) {
+		changeBlock(clickedBlock.i, clickedBlock.j, type)
+	}
+}
+
+//Checks all the blocks to see if they were clicked
+function blockClicked(x, y) {
+	for (var i=0;i<grids;i++) {
+		for (var j=0;j<grids;j++) {
+			if (blocks[i][j].isClicked(x, y)) {
+				if (blocks[i][j].type.value != 0) { 
+					clickedBlock=blocks[i][j];
+					return true;
+				}
+			}
+		}
+	}	
+	return false;
+}
+
+//Initialize grid
+function init() {
+	for (var i=0;i<grids;i++) {
+		blocks[i] = new Array(grids)
+		for (var j=0;j<grids;j++) {
+			blocks[i][j] = new block(BLOCKTYPE.EMPTY, i, j);
+		}
+	}
+	changeBlock(4,4,BLOCKTYPE.TC);
+}
+
+//Draws the grid
+function drawGrid() {
+	ctx.fillStyle='#EEEEEE';
+	ctx.fillRect(0,0,gridSize,gridSize);
+	for (var i=0;i<grids;i++) {
+		for (var j=0;j<grids;j++) {
+			var current_type=blocks[i][j].type;
+			if (current_type.value != 0 ) {
+				var current_size=blocks[i][j].size;
+				var x=blocks[i][j].x
+				var y=blocks[i][j].y
+				ctx.fillStyle=current_type.color;
+				if (current_type.value != 5 ) {
+					ctx.fillRect(x + padding,y + padding,current_size - padding,current_size - padding);
+				} else {	
+					ctx.fillRect(x + (padding / 2), y + (padding / 2), current_size,current_size);
+				}
+			}
+	 	}		
+	}	
+}
+
+function drawKey () {
+	ctx.font="20px Georgia";
+	var y = 20;
+	for (var x in BLOCKTYPE) {
+		var blk = BLOCKTYPE[x];
+		if (blk.value != 0 && blk.value != 1) {
+			ctx.fillStyle = blk.color;
+			ctx.fillText(blk.name,gridSize + 10,y);
+			y += 30;
+		}
+	}
+}
+
+function exportGrid () {
+	var output = "["
+	var b
+	for (var i=0;i<grids;i++) {
+		for (var j=0;j<grids;j++) {
+			b = blocks[i][j];
+			if (b.type.value != 0 && b.type.value != 1) {
+				output += b.toString() + ",";
+			}
+		}
+	}
+	output = output.substring(0, output.length - 1);
+	output += "]";
+	document.getElementById('saveField').value = output;
+}
+
+function importGrid () {
+	init()
+	input = JSON.parse(document.getElementById('saveField').value);
+	//document.write(input[0].type)
+	for (var x=0; x < input.length; x++) {
+		blocktype=getBlocktype(input[x].type);
+		//document.write(blocktype);
+		changeBlock(input[x].i, input[x].j, blocktype);
+	}
+}
+
+var c=document.getElementById('canvas');
+var ctx=c.getContext('2d');
+init()
+drawKey()
+init_mouse()
+drawGrid()
+</script>
+<div>
+	<div class="blocktype">1v1:</div>
+	<input type="radio" checked name="type" id="type_Road" value="Road" /><div class="blocktype" onClick="document.getElementById('type_Road').checked=true">Road</div>
+	<input type="radio" name="type" id="type_BS" value="BS" /><div class="blocktype" onClick="document.getElementById('type_BS').checked=true">Blacksmith</div>
+	<input type="radio" name="type" id="type_Armory" value="Armory" /><div class="blocktype" onClick="document.getElementById('type_Armory').checked=true">Armory</div>
+	<input type="radio" name="type" id="type_Foundry" value="Foundry" /><div class="blocktype" onClick="document.getElementById('type_Foundry').checked=true">Foundry</div>
+	<input type="radio" name="type" id="type_Market" value="Market" /><div class="blocktype" onClick="document.getElementById('type_Market').checked=true">Market</div>
+	<input type="radio" name="type" id="type_Basement" value="Basement" /><div class="blocktype" onClick="document.getElementById('type_Basement').checked=true">Basement</div>
+	<input type="radio" name="type" id="type_Tower" value="Tower" /><div class="blocktype" onClick="document.getElementById('type_Tower').checked=true">Tower</div>
+	<input type="radio" name="type" id="type_Farm" value="Farm" /><div class="blocktype" onClick="document.getElementById('type_Farm').checked=true">Farm</div>
+	<br><div class="blocktype">2x2:</div>
+	<input type="radio" name="type" id="type_Barracks" value="Barracks" /><div class="blocktype" onClick="document.getElementById('type_Barracks').checked=true">Barracks</div>
+	<input type="radio" name="type" id="type_TP" value="TP" /><div class="blocktype" onClick="document.getElementById('type_TP').checked=true">Trading Post</div>
+	<input type="radio" name="type" id="type_University" value="University" /><div class="blocktype" onClick="document.getElementById('type_University').checked=true">University</div>
+	<input type="radio" name="type" id="type_Delete" value="Delete" /><div class="blocktype" onClick="document.getElementById('type_Delete').checked=true">Delete</div>
+	<br><br>
+	<button type="Button" onClick='init()'>Reset</button>
+	<button type="Button" onClick='exportGrid()'>Save</button>
+	<button type="Button" onClick='importGrid()'>Load</button>
+	<br>
+	<textarea rows="4" cols="50" id="saveField"></textarea>
+</div>
+</body>
+
+</html>
