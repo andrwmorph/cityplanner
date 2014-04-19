@@ -270,19 +270,37 @@ function exportGrid () {
 	output = output.substring(0, output.length - 1);
 	output += "]";
 	document.getElementById('saveField').value = output;
+	var outLink = '<a href="' + document.URL + "?layout=" + encodeURIComponent(output) + '">Saved Layout</a>';
+	document.getElementById('savelink').innerHTML = outLink;
 }
 
 //Recreate the blocks from the JSON string
 function importGrid () {
+	//init()
+	urlparam = location.search.split('layout=')[1];
+	if (urlparam) {
+		var input = JSON.parse(decodeURIComponent(urlparam))
+		//input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
+		//document.write(input[0].type)
+		for (var x=0; x < input.length; x++) {
+			blocktype=getBlocktype(input[x].type);
+			//document.write(blocktype);
+			changeBlock(input[x].i, input[x].j, blocktype);
+		}
+	}
+
+}
+
+function importJSONGrid () {
 	init()
-	input = JSON.parse(document.getElementById('saveField').value);
-	//document.write(input[0].type)
+	var input = JSON.parse(decodeURIComponent(urlparam))
+	input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
 	for (var x=0; x < input.length; x++) {
 		blocktype=getBlocktype(input[x].type);
-		//document.write(blocktype);
 		changeBlock(input[x].i, input[x].j, blocktype);
 	}
 }
+
 
 function clickBlocktype(radio, blocktype) {
 	$('.blocktype').css('color','black');
@@ -299,6 +317,7 @@ function changeBackground(div, color) {
 var c=document.getElementById('canvas');
 var ctx=c.getContext('2d');
 init()
+importGrid()
 init_mouse()
 
 </script>
@@ -340,9 +359,10 @@ init_mouse()
 	<br>
 	<button type="Button" onClick='init()'>Reset</button>
 	<button type="Button" onClick='exportGrid()'>Save</button>
-	<button type="Button" onClick='importGrid()'>Load</button>
+	<button type="Button" onClick='importJSONGrid()'>Load</button>
 	<br>
-	<textarea rows="4" cols="50" id="saveField"></textarea>
+	<div id="savelink"></div>
+	<textarea rows="4" cols="50" id="saveField">Copy and paste the generated JSON to share/save a layout</textarea>
 </div>
 </div>
 </body>
