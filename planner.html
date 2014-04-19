@@ -7,9 +7,12 @@
 			.plannerbody { text-align: center; }
 			.blocktype { display: inline-block;
 						 font-size: larger;
-		   				 padding: 10px; }
-			.buildingtable { width: 600px; }
-			.btright { text-align: left; 
+						 padding: 10px;
+						 border-style: ridge;
+						 border-width: 5px; }
+			.blocktype_title { font-size: 20px; }
+			.buildingtable { width: 800px; }
+			.btright { text-align: center; 
 			 		   vertical-align: middle; }
 			.btleft { text-align: right; 
 			 		   vertical-align: middle; }
@@ -80,6 +83,10 @@ function onMouseClick(evt) {
 				changeClickedBlock(BLOCKTYPE.UNIVERSITY);
 			}else if(document.getElementById('type_Stables').checked) {
 				changeClickedBlock(BLOCKTYPE.STABLES);
+			}else if(document.getElementById('type_LM').checked) {
+				changeClickedBlock(BLOCKTYPE.LM);
+			}else if(document.getElementById('type_Grass').checked) {
+				changeClickedBlock(BLOCKTYPE.GRASS);
 			}else if(document.getElementById('type_Delete').checked) {
 				deleteClickedBlock();
 			}
@@ -94,8 +101,10 @@ $('#canvas').click(onMouseClick);
 var BLOCKTYPE = {
 	NULL : {value: 0, name: "Null", size: 1, color: "#000000"}, 
 	EMPTY : {value: 1, name: "Empty", size: 1, color: "#CCCCCC"}, 
+	GRASS : {value: 17, name: "Grass", size: 1, color: "#00FF00"}, 
 	TC: {value: 2, name: "Town Center", size: 3, color: "#AA3030"}, 
 	FARM: {value: 3, name: "Farm", size: 1, color: "#00AA00"},
+	LM: {value: 16, name: "Lumber Mill", size: 1, color: "#006600"},
 	BARRACKS: {value: 4, name: "Barracks", size: 2, color: "#0000AA"},
 	ROAD: {value: 5, name: "Road", size: 1, color: "#333333"}, 
 	BS: {value: 6, name: "Blacksmith", size: 1, color: "#00AAAA"},
@@ -261,7 +270,7 @@ function drawKey () {
 			count=countBlocks(blk);	
 			ctx.fillStyle = blk.color;
 			ctx.fillText(count + " - " + blk.name,gridSize + 10,y);
-			y += 30;
+			y += 25;
 		}
 	}
 }
@@ -316,7 +325,11 @@ function importJSONGrid () {
 function clickBlocktype(radio, blocktype) {
 	$('.blocktype').css('color','black');
 	$('.blocktype').css('fontWeight','normal');
-	blocktype.style.color = "blue";
+	if (radio == "type_Delete") {
+			blocktype.style.color="#993300"
+	} else {
+		blocktype.style.color = "#003399";
+	}
 	blocktype.style.fontWeight = "bold";
 	document.getElementById(radio).checked = true;
 }
@@ -335,25 +348,31 @@ init_mouse()
 <div>
 	<table class="buildingtable" align="center">
 		<tr>
-			<td class="btleft">
-				<div class="blocktype">1v1:</div>
-			</td>
+			<!--<td class="btleft" rowspan=2>
+				<div class="blocktype_title">1x1:</div>
+			</td>-->
 			<td class="btright">
 				<input class='radio' type="radio" checked name="type" id="type_Road" value="Road" /><div class="blocktype" onClick="clickBlocktype('type_Road',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Road</div>
 				<input class='radio' type="radio" name="type" id="type_BS" value="BS" /><div class="blocktype" onClick="clickBlocktype('type_BS',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Blacksmith</div>
 				<input class='radio' type="radio" name="type" id="type_Armory" value="Armory" /><div class="blocktype" onClick="clickBlocktype('type_Armory',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Armory</div>
 				<input class='radio' type="radio" name="type" id="type_Foundry" value="Foundry" /><div class="blocktype" onClick="clickBlocktype('type_Foundry',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Foundry</div>
-				<input class='radio' type="radio" name="type" id="type_Market" value="Market" /><div class="blocktype" onClick="clickBlocktype('type_Market',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Market</div><br>
+				<input class='radio' type="radio" name="type" id="type_Market" value="Market" /><div class="blocktype" onClick="clickBlocktype('type_Market',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Market</div>
 				<input class='radio' type="radio" name="type" id="type_Refinery" value="Refinery" /><div class="blocktype" onClick="clickBlocktype('type_Refinery',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Refinery</div>
-				<input class='radio' type="radio" name="type" id="type_Basement" value="Basement" /><div class="blocktype" onClick="clickBlocktype('type_Basement',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Basement</div>
-				<input class='radio' type="radio" name="type" id="type_Tower" value="Tower" /><div class="blocktype" onClick="clickBlocktype('type_Tower',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Tower</div>
-				<input class='radio' type="radio" name="type" id="type_Farm" value="Farm" /><div class="blocktype" onClick="clickBlocktype('type_Farm',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Farm</div>
 			</td>
 		</tr>
 		<tr>
-			<td class="btleft">
-				<br><div class="blocktype">2x2:</div>
+			<td class="btright">
+				<input class='radio' type="radio" name="type" id="type_Basement" value="Basement" /><div class="blocktype" onClick="clickBlocktype('type_Basement',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Basement</div>
+				<input class='radio' type="radio" name="type" id="type_Tower" value="Tower" /><div class="blocktype" onClick="clickBlocktype('type_Tower',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Tower</div>
+				<input class='radio' type="radio" name="type" id="type_Farm" value="Farm" /><div class="blocktype" onClick="clickBlocktype('type_Farm',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Farm</div>
+				<input class='radio' type="radio" name="type" id="type_LM" value="Lumber Mill" /><div class="blocktype" onClick="clickBlocktype('type_LM',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Lumber Mill</div>
+				<input class='radio' type="radio" name="type" id="type_Grass" value="Grass" /><div class="blocktype" onClick="clickBlocktype('type_Grass',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Grass</div>
 			</td>
+		</tr>
+		<tr>
+			<!--<td class="btleft">
+				<br><div class="blocktype_title">2x2:</div>
+			</td>-->
 			<td class="btright">
 				<input class="radio" type="radio" name="type" id="type_Barracks" value="Barracks" /><div class="blocktype" onClick="clickBlocktype('type_Barracks',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Barracks</div>
 				<input class="radio" type="radio" name="type" id="type_TP" value="TP" /><div class="blocktype" onClick="clickBlocktype('type_TP',this)" onMouseOver="changeBackground(this,'grey')" onMouseOut="changeBackground(this, 'white')">Trading Post</div>
