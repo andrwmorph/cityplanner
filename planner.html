@@ -1,7 +1,8 @@
 <html>
 <head>
 	<title>City Planner</title>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 	<style type="text/css">
 			.plannerbody { text-align: center; }
 			.blocktype { display: inline-block;
@@ -17,7 +18,7 @@
 </head>
 <body>
 <div class="plannerbody">
-<canvas id="canvas" height=450 width=600>Your browser does not support the HTML5 canvas tag.</canvas>
+<canvas id="canvas" height=450 width=600>Bacon bacon bacon</canvas>
 
 <script>
 var blockSize=40;
@@ -40,11 +41,19 @@ function init_mouse() {
 	canvasMinY = $("#canvas").offset().top;
 	canvasMaxY = canvasMinX + HEIGHT;
 }
+function getMousePos(evt) {
+	//var rect = $("#canvas").getBoundingClientRect();
+	rect = { left: canvasMinX, top: canvasMinY };
+	return {
+		x: evt.clientX - rect.left,
+		y: evt.clientY - rect.top
+	};
+}
 
 //Mouse click processing
 function onMouseClick(evt) {
 	if (evt.pageX > canvasMinX && evt.pageX < canvasMaxX && evt.pageY > canvasMinY && evt.pageY < canvasMaxY) {
-		if (blockClicked(evt.offsetX, evt.offsetY)) {
+		if (blockClicked(getMousePos(evt))) {
 			if(document.getElementById('type_Farm').checked) {
 				changeClickedBlock(BLOCKTYPE.FARM);
 			}else if(document.getElementById('type_Barracks').checked) {
@@ -180,7 +189,9 @@ function changeClickedBlock(type) {
 }
 
 //Checks all the blocks to see if they were clicked
-function blockClicked(x, y) {
+function blockClicked(coords) {
+	var x = coords.x
+	var y = coords.y
 	for (var i=0;i<grids;i++) {
 		for (var j=0;j<grids;j++) {
 			if (blocks[i][j].isClicked(x, y)) {
@@ -362,7 +373,7 @@ init_mouse()
 	<button type="Button" onClick='importJSONGrid()'>Load</button>
 	<br>
 	<div id="savelink"></div>
-	<textarea rows="4" cols="50" id="saveField">Copy and paste the generated JSON to share/save a layout</textarea>
+	<textarea rows="4" cols="50" id="saveField">Copy and paste the generated JSON or save the link that appears to share/save a layout</textarea>
 </div>
 </div>
 </body>
