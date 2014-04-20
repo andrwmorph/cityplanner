@@ -127,6 +127,8 @@
 					}
 				}
 				printButton("DELETE", { name: "Delete" });
+				document.getElementById('type_ROAD').checked = true;
+				$('#box_ROAD').addClass('on');
 			</script>
 			<!--	<input class='radio' type="radio" name="type" id="type_BS" value="BS" /><div class="blocktype" onClick="clickBlocktype('type_BS',this)">Blacksmith</div>
 				<input class='radio' type="radio" name="type" id="type_Armory" value="Armory" /><div class="blocktype" onClick="clickBlocktype('type_Armory',this)">Armory</div>
@@ -335,14 +337,18 @@ function drawGrid() {
 				var y=blocks[i][j].y
 				ctx.fillStyle=current_type.color;
 				if (current_type.value != 5 ) {
-					ctx.fillRect(x + padding,y + padding,current_size - padding,current_size - padding);
+					draw2d(x,y,current_size,false);
 				} else {	
-					ctx.fillRect(x + (padding / 2), y + (padding / 2), current_size,current_size);
+					draw2d(x,y,current_size,true);
 				}
 			}
 	 	}		
 	}
-	//drawKey()
+}
+
+function draw2d (x, y, size, road) {
+	if (road) { ctx.fillRect(x + (padding / 2), y + (padding / 2), size,size); }
+	else { ctx.fillRect(x + padding,y + padding,size - padding,size - padding); }
 }
 
 //Counts the number of blocks of a certain type
