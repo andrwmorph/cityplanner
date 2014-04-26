@@ -275,7 +275,7 @@ function deleteClickedBlock() {
 function changeClickedBlock(type) {
 	if (clickedBlock.type.value == 1) {
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
-	} else if (clickedBlock.type.value == type.value) {
+	} else {
 		deleteClickedBlock();
 	}
 }
