@@ -274,6 +274,7 @@ function deleteClickedBlock() {
 //Changes the clicked block type
 function changeClickedBlock(type) {
 	if (clickedBlock.type.value == 1) {
+	//if ((clickedBlock.type.value == 1) || (clickedBlock.type.value == 17)) {
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
 	} else if ((clickedBlock.type.value == 17) && ((type.value == 3) || (type.value == 16))) { 
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
@@ -308,10 +309,8 @@ function init() {
 		}
 	}
 	changeBlock(4,4,BLOCKTYPE.TC);
-	initGrass();
 }
 
-//Grass Activate!!!
 function initGrass() {
 	changeBlock(1,1,BLOCKTYPE.GRASS);
 	changeBlock(2,2,BLOCKTYPE.GRASS);
@@ -425,8 +424,10 @@ function importGrid () {
 			//document.write(blocktype);
 			changeBlock(input[x].i, input[x].j, blocktype);
 		}
+		return true;
+    } else {
+		return false;
 	}
-
 }
 
 function importJSONGrid () {
@@ -459,14 +460,17 @@ function changeBackground(div, color) {
 var c=document.getElementById('canvas');
 var ctx=c.getContext('2d');
 init()
-importGrid()
 init_mouse()
+
+if (importGrid() != true) {
+	initGrass();
+}
 
 </script>
 	<div class="footer">
 		<div style='text-align:center'>
 				<br>
-				<button type="Button" onClick='init()'>Reset</button>
+				<button type="Button" onClick='init();initGrass()'>Reset</button>
 				<button type="Button" onClick='exportGrid()'>Save</button>
 				<button type="Button" onClick='importJSONGrid()'>Load</button>
 				<br>
