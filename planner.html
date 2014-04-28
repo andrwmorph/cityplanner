@@ -93,7 +93,7 @@
 		var BLOCKTYPE = {
 			NULL : {value: 0, name: "Null", size: 1, color: "#000000"}, 
 			EMPTY : {value: 1, name: "Empty", size: 1, color: "#CCCCCC"}, 
-			GRASS : {value: 17, name: "Grass", size: 1, color: "#666666"}, 
+			GRASS : {value: 17, name: "Grass", size: 1, color: "#777777"}, 
 			TC: {value: 2, name: "Town Center", size: 3, color: "#AA3030"}, 
 			FARM: {value: 3, name: "Farm", size: 1, color: "#00AA00"},
 			LM: {value: 16, name: "Lumber Mill", size: 1, color: "#006600"},
@@ -275,6 +275,8 @@ function deleteClickedBlock() {
 function changeClickedBlock(type) {
 	if (clickedBlock.type.value == 1) {
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
+	} else if ((clickedBlock.type.value == 17) && ((type.value == 3) || (type.value == 16))) { 
+		changeBlock(clickedBlock.i, clickedBlock.j, type);
 	} else {
 		deleteClickedBlock();
 	}
@@ -306,6 +308,19 @@ function init() {
 		}
 	}
 	changeBlock(4,4,BLOCKTYPE.TC);
+	initGrass();
+}
+
+//Grass Activate!!!
+function initGrass() {
+	changeBlock(1,1,BLOCKTYPE.GRASS);
+	changeBlock(2,2,BLOCKTYPE.GRASS);
+	changeBlock(1,9,BLOCKTYPE.GRASS);
+	changeBlock(2,8,BLOCKTYPE.GRASS);
+	changeBlock(8,2,BLOCKTYPE.GRASS);
+	changeBlock(8,8,BLOCKTYPE.GRASS);
+	changeBlock(9,1,BLOCKTYPE.GRASS);
+	changeBlock(9,9,BLOCKTYPE.GRASS);
 }
 
 //Draws the grid
