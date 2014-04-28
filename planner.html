@@ -273,11 +273,11 @@ function deleteClickedBlock() {
 
 //Changes the clicked block type
 function changeClickedBlock(type) {
-	if (clickedBlock.type.value == 1) {
-	//if ((clickedBlock.type.value == 1) || (clickedBlock.type.value == 17)) {
+	//if (clickedBlock.type.value == 1) {
+	if ((clickedBlock.type.value == 1) || (clickedBlock.type.value == 17)) {
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
-	} else if ((clickedBlock.type.value == 17) && ((type.value == 3) || (type.value == 16))) { 
-		changeBlock(clickedBlock.i, clickedBlock.j, type);
+	//} else if ((clickedBlock.type.value == 17) && ((type.value == 3) || (type.value == 16))) { 
+	//	changeBlock(clickedBlock.i, clickedBlock.j, type);
 	} else {
 		deleteClickedBlock();
 	}
