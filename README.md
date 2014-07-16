@@ -1,4 +1,4 @@
 cityplanner
 ===========
 
-Tribal Hero city planner in JavaScript. Doesn't work in IE.
+Tribal Hero (http://tribalhero.com/) city planner in JavaScript. Doesn't work in IE and probably never will.
