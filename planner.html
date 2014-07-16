@@ -68,13 +68,13 @@
 
 		function load() {
 			gapi.client.setApiKey('AIzaSyAXNn-D3PIsy-VtttAoKbyMbS5owmsZEV0');
-			console.log('After attempting to set API key');
+			//console.log('After attempting to set API key');
 			gapi.client.load('urlshortener', 'v1', makeRequest);
-			console.log('After attempting to load urlshortener');
+			//console.log('After attempting to load urlshortener');
 		}
 		function makeRequest() {
 			lurl=$('input#longURL').val();
-			console.log(lurl);
+			//console.log(lurl);
 			var request = gapi.client.urlshortener.url.insert({ 
 				'resource':{
 				'longUrl': lurl
@@ -85,7 +85,7 @@
 			});
 		}
 		function outputResults(url) {
-			var outLink = '<a href="' + url + '">Saved Layout</a>';
+			var outLink = '<a href="' + url + '">Saved Layout:</a> <input readonly name="shortlink" type="text" value="' + url + '">';
 			document.getElementById('savelink').innerHTML = outLink;
 		}
 
