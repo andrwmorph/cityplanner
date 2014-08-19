@@ -239,8 +239,12 @@ function block(type, i, j)
 		}
 	}
 	this.toString = function() {
-		return "{ \"type\": " + this.type.value + ", \"i\": " + this.i + ", \"j\": " +  this.j + " }";
-		
+		//return "{ \"type\": " + this.type.value + ", \"i\": " + this.i + ", \"j\": " +  this.j + " }";
+		var loc = (this.i + ( this.j * grids ));
+		return "{\"t\":" + this.type.value + ",\"c\":" + loc + "}";
+	}
+	this.getLoc = function() {
+		return  (this.i + ( this.j * grids ));
 	}
 }
 
@@ -407,7 +411,7 @@ function exportGrid () {
 	for (var i=0;i<grids;i++) {
 		for (var j=0;j<grids;j++) {
 			b = blocks[i][j];
-			if (b.type.value != 0 && b.type.value != 1) {
+			if (b.type.value != 0 && b.type.value != 1 && b.type.value != 2) {
 				output += b.toString() + ",";
 			}
 		}
@@ -415,7 +419,7 @@ function exportGrid () {
 	output = output.substring(0, output.length - 1);
 	output += "]";
 	document.getElementById('saveField').value = output;
-	longURL = document.URL + "?layout=" + encodeURIComponent(output);
+	longURL = document.URL + "?layout2=" + encodeURIComponent(output);
 	//longURL = document.URL + "?layout2=" + btoa(encodeURIComponent(output));
 	//console.log(longURL);
 	document.getElementById('longURL').value = longURL;
@@ -424,13 +428,31 @@ function exportGrid () {
 	//makeRequest(longURL);
 }
 
+function loadBlock (input) {
+	blocktype=getBlocktype(input.t);
+	var i = input.c % grids;
+	var j = Math.floor(input.c / grids);
+	changeBlock(i, j, blocktype);
+}
+
 //Recreate the blocks from the JSON string
 function importGrid () {
-	urlparam = location.search.split('layout=')[1];
+	urlparam = location.search.split('layout2=')[1];
+	urlparam_old = location.search.split('layout=')[1];
 	//urlparam = location.search.split('layout2=')[1];
 	console.log(urlparam);
+	console.log(urlparam_old);
 	if (urlparam) {
 		var input = JSON.parse(decodeURIComponent(urlparam))
+		//var input = JSON.parse(atob(decodeURIComponent(urlparam)))
+		//input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
+		//document.write(input[0].type)
+		for (var x=0; x < input.length; x++) {
+			loadBlock(input[x]);
+		}
+		return true;
+    } else if (urlparam_old) {
+		var input = JSON.parse(decodeURIComponent(urlparam_old));
 		//var input = JSON.parse(atob(decodeURIComponent(urlparam)))
 		//input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
 		//document.write(input[0].type)
@@ -440,7 +462,7 @@ function importGrid () {
 			changeBlock(input[x].i, input[x].j, blocktype);
 		}
 		return true;
-    } else {
+	} else {
 		return false;
 	}
 }
@@ -449,8 +471,7 @@ function importJSONGrid () {
 	init()
 	input = JSON.parse(document.getElementById('saveField').value);
 	for (var x=0; x < input.length; x++) {
-		blocktype=getBlocktype(input[x].type);
-		changeBlock(input[x].i, input[x].j, blocktype);
+		loadBlock(input[x]);
 	}
 }
 
@@ -491,6 +512,7 @@ if (importGrid() != true) {
 				<br>
 				<div id="savelink"></div>
 				<textarea rows="4" cols="50" id="saveField">Copy and paste the generated JSON or save the link that appears to share/save a layout</textarea>
+				<p>Note: Save JSON format updated! Go <a href="planner_old.html">here</a> to load an old save. All URLs still work.</p>
 				<p>Suggestions/Bugs: Send mail to andrwmorph in <a href="http://tribalhero.com/">Tribal Hero</a> or submit an issue on <a href="https://github.com/andrwmorph/cityplanner">GitHub</a></p>
 		</div>
 	</div>
