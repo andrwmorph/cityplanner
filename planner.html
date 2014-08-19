@@ -287,11 +287,8 @@ function deleteClickedBlock() {
 
 //Changes the clicked block type
 function changeClickedBlock(type) {
-	//if (clickedBlock.type.value == 1) {
 	if ((clickedBlock.type.value == 1) || (clickedBlock.type.value == 17)) {
 		changeBlock(clickedBlock.i, clickedBlock.j, type);
-	//} else if ((clickedBlock.type.value == 17) && ((type.value == 3) || (type.value == 16))) { 
-	//	changeBlock(clickedBlock.i, clickedBlock.j, type);
 	} else {
 		deleteClickedBlock();
 	}
@@ -408,11 +405,21 @@ function updateCounts () {
 function exportGrid () {
 	var output = "["
 	var b
+	var coords = new Array(BLOCKTYPE.length);
+	for (var x in BLOCKTYPE) {
+		var blk = BLOCKTYPE[x];
+		coords[blk.value] = new Array();
+	}
 	for (var i=0;i<grids;i++) {
 		for (var j=0;j<grids;j++) {
-			b = blocks[i][j];
-			if (b.type.value != 0 && b.type.value != 1 && b.type.value != 2) {
-				output += b.toString() + ",";
+			 coords[blocks[i][j].type.value].push(blocks[i][j].getLoc());
+		}
+	}
+	for (var x in BLOCKTYPE) {
+		var blk = BLOCKTYPE[x];
+		if (blk.value != 0 && blk.value != 1 && blk.value != 2) {
+			if (coords[blk.value].length > 0) {
+				output += "{\"t\":" + blk.value + ",\"c\":\"" + coords[blk.value].join("x") + "\"},";
 			}
 		}
 	}
@@ -420,18 +427,16 @@ function exportGrid () {
 	output += "]";
 	document.getElementById('saveField').value = output;
 	longURL = document.URL + "?layout2=" + encodeURIComponent(output);
-	//longURL = document.URL + "?layout2=" + btoa(encodeURIComponent(output));
-	//console.log(longURL);
 	document.getElementById('longURL').value = longURL;
 	document.getElementById('savelink').innerHTML = "Generating shortlink... please wait...";
 	load();
-	//makeRequest(longURL);
 }
 
-function loadBlock (input) {
-	blocktype=getBlocktype(input.t);
-	var i = input.c % grids;
-	var j = Math.floor(input.c / grids);
+//Calculates the coords and loads the block
+function loadBlock (type, c) {
+	blocktype=getBlocktype(type);
+	var i = c % grids;
+	var j = Math.floor(c / grids);
 	changeBlock(i, j, blocktype);
 }
 
@@ -439,26 +444,21 @@ function loadBlock (input) {
 function importGrid () {
 	urlparam = location.search.split('layout2=')[1];
 	urlparam_old = location.search.split('layout=')[1];
-	//urlparam = location.search.split('layout2=')[1];
-	console.log(urlparam);
-	console.log(urlparam_old);
+	//console.log(urlparam);
+	//console.log(urlparam_old);
 	if (urlparam) {
 		var input = JSON.parse(decodeURIComponent(urlparam))
-		//var input = JSON.parse(atob(decodeURIComponent(urlparam)))
-		//input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
-		//document.write(input[0].type)
 		for (var x=0; x < input.length; x++) {
-			loadBlock(input[x]);
+			coords = input[x].c.split("x")
+			for (var c = 0; c < coords.length; c++ ) {
+				loadBlock(input[x].t, coords[c]);
+			}
 		}
 		return true;
     } else if (urlparam_old) {
 		var input = JSON.parse(decodeURIComponent(urlparam_old));
-		//var input = JSON.parse(atob(decodeURIComponent(urlparam)))
-		//input = JSON.parse(decodeURIComponent(document.getElementById('saveField').value));
-		//document.write(input[0].type)
 		for (var x=0; x < input.length; x++) {
 			blocktype=getBlocktype(input[x].type);
-			//document.write(blocktype);
 			changeBlock(input[x].i, input[x].j, blocktype);
 		}
 		return true;
@@ -471,7 +471,10 @@ function importJSONGrid () {
 	init()
 	input = JSON.parse(document.getElementById('saveField').value);
 	for (var x=0; x < input.length; x++) {
-		loadBlock(input[x]);
+		coords = input[x].c.split("x")
+		for (var c = 0; c < coords.length; c++ ) {
+			loadBlock(input[x].t, coords[c]);
+		}
 	}
 }
 
