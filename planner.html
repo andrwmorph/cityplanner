@@ -426,7 +426,7 @@ function exportGrid () {
 	output = output.substring(0, output.length - 1);
 	output += "]";
 	document.getElementById('saveField').value = output;
-	longURL = document.URL + "?layout2=" + encodeURIComponent(output);
+	longURL = document.URL.split("?")[0] + "?layout2=" + encodeURIComponent(output);
 	document.getElementById('longURL').value = longURL;
 	document.getElementById('savelink').innerHTML = "Generating shortlink... please wait...";
 	load();
